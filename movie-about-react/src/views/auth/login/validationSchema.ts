@@ -1,9 +1,9 @@
 import { object, string, boolean, ref, Schema } from "yup";
 
 export const loginSchema = object({
-  username: string()
-    .min(5, "Username must be at least 5 characters long")
-    .required("Username is required"),
+  usernameOrEmail: string()
+    .min(5, "Username Or Email must be at least 5 characters long")
+    .required("Username Or Email is required"),
   password: string()
     .min(8, "Password must be at least 8 characters long")
     .matches(

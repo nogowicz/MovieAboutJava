@@ -7,11 +7,18 @@ import axios, { AxiosError } from 'axios';
 import { useSignIn } from 'react-auth-kit';
 import Navbar from '../../../components/navbar';
 import { useNavigate } from 'react-router-dom';
-import { login } from '../../../utils/api';
 
 interface Inputs {
-    username: string;
+    usernameOrEmail: string;
     password: string;
+}
+
+interface ResponseType {
+    data: {
+        accessToken: string;
+        expiresIn: number;
+        tokenType: string;
+    }
 }
 
 
@@ -31,26 +38,26 @@ export default function Login() {
 
     const onSubmit = async (data: Inputs) => {
         try {
-            const response = await login(data);
+            const response: ResponseType = await axios.post("http://localhost:8080/api/auth/signin", data);
 
-            // signIn({
-            //     token: response.token,
-            //     expiresIn: response.expiresIn,
-            //     tokenType: response.tokenType,
-            //     authState: {
-            //         username: data.username,
-            //     }
-            // });
-            // navigate("/");
-            console.log(data);
+            console.log(response.data)
+            signIn({
+                token: response.data.accessToken,
+                expiresIn: response.data.expiresIn,
+                tokenType: response.data.tokenType,
+                authState: {
+                    usernameOrEmail: data.usernameOrEmail,
+                }
+            });
+            navigate("/");
         } catch (error: any) {
             if (error && error instanceof AxiosError) {
                 if (error.response) {
-                    setError("username", { message: error.response.data });
-                    setError("password", { message: error.response.data });
+                    setError("usernameOrEmail", { message: error.response.data });
+                    setError("usernameOrEmail", { message: error.response.data });
                     console.log(error)
                 } else {
-                    setError("username", { message: "An error occurred. Please try again later." });
+                    setError("usernameOrEmail", { message: "An error occurred. Please try again later." });
                     setError("password", { message: "An error occurred. Please try again later." });
                 }
             }
@@ -64,17 +71,17 @@ export default function Login() {
                 <form onSubmit={handleSubmit(onSubmit)} style={formStyle}>
                     <h1 style={{ color: '#000', textAlign: 'center', fontSize: '2rem', fontWeight: 'bold' }}>Sign In</h1>
                     <div style={fieldStyle}>
-                        <label htmlFor="username">Username:</label>
+                        <label htmlFor="usernameOrEmail">Username Or Email:</label>
                         <input
                             type="text"
                             style={{
                                 ...inputStyle,
-                                ...(errors.username ? errorInputStyle : {})
+                                ...(errors.usernameOrEmail ? errorInputStyle : {})
                             }}
-                            id="username"
-                            {...register('username', { required: 'To pole jest wymagane' })}
+                            id="usernameOrEmail"
+                            {...register('usernameOrEmail', { required: 'This field is required' })}
                         />
-                        {errors.username && <span style={errorTextStyle}>{errors.username.message}</span>}
+                        {errors.usernameOrEmail && <span style={errorTextStyle}>{errors.usernameOrEmail.message}</span>}
                     </div>
                     <div style={fieldStyle}>
                         <label htmlFor="password">Password:</label>
@@ -85,7 +92,7 @@ export default function Login() {
                                 ...(errors.password ? errorInputStyle : {})
                             }}
                             id="password"
-                            {...register('password', { required: 'To pole jest wymagane' })}
+                            {...register('password', { required: 'This field is required' })}
                         />
                         {errors.password && <span style={errorTextStyle}>{errors.password.message}</span>}
                     </div>

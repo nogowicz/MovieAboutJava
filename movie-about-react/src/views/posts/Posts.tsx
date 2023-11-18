@@ -5,7 +5,7 @@ import Navbar from '../../components/navbar';
 import { Post, formatDate } from '../../components/aside/Aside';
 import { useAuthUser } from 'react-auth-kit';
 import Modal from '../../components/modal';
-import CommentsModal from '../../components/comments-modal';
+// import CommentsModal from '../../components/comments-modal';
 
 
 
@@ -16,27 +16,28 @@ export default function Posts() {
     const [showModal, setShowModal] = useState(false);
     const [showCommentsModal, setShowCommentsModal] = useState(false);
     const authUser = useAuthUser();
-    const username = authUser()?.username || '';
-    const [userRole, setUserRole] = useState<string>('');
+    const username = authUser()?.usernameOrEmail || '';
+    // const [userRole, setUserRole] = useState<string>('');
     const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
 
 
 
 
 
-    const fetchUserRole = async () => {
-        try {
-            const response = await axios.get(`http://localhost:3000/user-role?username=${username}`);
-            setUserRole(response.data.userRole);
-        } catch (error) {
-            console.error('Error while fetching user role:', error);
-        }
-    };
+    // const fetchUserRole = async () => {
+    //     try {
+    //         const response = await axios.get(`http://localhost:3000/user-role?username=${username}`);
+    //         setUserRole(response.data.userRole);
+    //     } catch (error) {
+    //         console.error('Error while fetching user role:', error);
+    //     }
+    // };
 
     const fetchPosts = async () => {
         try {
-            const response = await axios.get('http://localhost:3000/posts');
+            const response = await axios.get('http://localhost:8080/api/posts/postsWithComments');
             setPosts(response.data);
+            console.log(response.data);
         } catch (error) {
             console.error('Error while fetching posts:', error);
         }
@@ -86,12 +87,12 @@ export default function Posts() {
 
     useEffect(() => {
         fetchPosts();
-        fetchUserRole();
+        // fetchUserRole();
     }, []);
 
-    useEffect(() => {
-        fetchPosts();
-    }, [showCommentsModal, closeModal]);
+    // useEffect(() => {
+    //     fetchPosts();
+    // }, [showCommentsModal, closeModal]);
 
 
 
@@ -279,7 +280,7 @@ export default function Posts() {
             <Navbar mode='auth' />
             <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', marginTop: 50 }}>
                 <Modal show={showModal} onClose={closeModal} postId={selectedPostId} />
-                <CommentsModal show={showCommentsModal} onClose={closeCommentsModal} postId={selectedPostId} />
+                {/* <CommentsModal show={showCommentsModal} onClose={closeCommentsModal} postId={selectedPostId} /> */}
                 <div
                     style={{
                         display: 'flex',
@@ -379,7 +380,7 @@ export default function Posts() {
                                     wordWrap: 'break-word',
                                 }}
                             >
-                                {(post.addedBy === username || userRole === 'admin') && renderOptions(post)}
+                                {(post.addedBy === username) && renderOptions(post)}
                                 <h2 style={{ color: '#000', fontSize: '1.5em', marginBottom: '0.5em' }}>{post.title}</h2>
                                 <p style={{ color: '#666', marginBottom: '0.5em' }}>{post.content}</p>
                                 <p style={{ color: '#999' }}>Author: {post.anonymous ? 'Anonymous' : post.addedBy}</p>
@@ -394,7 +395,6 @@ export default function Posts() {
                                     }}
                                     onClick={() => handleCommentsModal(post.id)}
                                 >Add Comment</p>
-
                                 <div>
                                     {post.comments.map((comment: any) => (
                                         <div
@@ -411,7 +411,7 @@ export default function Posts() {
                                                 wordWrap: 'break-word',
                                             }}
                                         >
-                                            {(comment.addedBy === username || userRole === 'admin') && renderCommentOptions(comment)}
+                                            {(comment.addedBy === username) && renderCommentOptions(comment)}
                                             <p style={{ color: '#666', marginBottom: '0.5em' }}>{comment.content}</p>
                                             <p style={{ color: '#999' }}>Author: {comment.addedBy}</p>
                                             <p style={{ color: '#999' }}>Date: {formatDate(comment.created_at)}</p>

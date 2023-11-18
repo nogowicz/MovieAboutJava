@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/posts")
+@RequestMapping("/api/posts")
 public class PostController {
 
     @Autowired
@@ -18,21 +18,32 @@ public class PostController {
     @Autowired
     CommentRepository commentRepository;
 
+    @CrossOrigin(origins = "http://localhost:5173")
     @GetMapping("")
     public List<Post> getAll() {
         return postRepository.getAll();
     }
 
+    @CrossOrigin(origins = "http://localhost:5173")
+    @GetMapping("/postsWithComments")
+    public List<Post> getAllPostsWithComments() {
+        return postRepository.getAllPostsWithComments();
+    }
+
+
+    @CrossOrigin(origins = "http://localhost:5173")
     @GetMapping("/{postId}")
     public Post getById(@PathVariable("postId") int postId) {
         return postRepository.getById(postId);
     }
 
+    @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("")
     public int add(@RequestBody List<Post> posts) {
         return postRepository.save(posts);
     }
 
+    @CrossOrigin(origins = "http://localhost:5173")
     @PutMapping("/{postId}")
     public int update(@PathVariable("postId") int postId, @RequestBody Post updatedPost) {
         Post post = postRepository.getById(postId);
@@ -50,6 +61,7 @@ public class PostController {
         }
     }
 
+    @CrossOrigin(origins = "http://localhost:5173")
     @PatchMapping("/{postId}")
     public int partiallyUpdate(@PathVariable("postId") int postId, @RequestBody Post updatedPost) {
         Post post = postRepository.getById(postId);
@@ -67,6 +79,7 @@ public class PostController {
         }
     }
 
+    @CrossOrigin(origins = "http://localhost:5173")
     @DeleteMapping("/{postId}")
     public int delete(@PathVariable("postId") int postId) {
         Post post = postRepository.getById(postId);

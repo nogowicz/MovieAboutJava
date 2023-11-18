@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -17,4 +18,5 @@ public class Post {
     private boolean isAnonymous;
     private String mediaType;
     private String addedBy;
+    private List<Comment> comments;
 }

@@ -16,12 +16,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
+import java.util.Date;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -42,15 +40,8 @@ public class AuthController {
     @Autowired
     private JwtTokenProvider tokenProvider;
 
-//    @PostMapping("/signin")
-//    public ResponseEntity<String> authenticateUser(@RequestBody LoginDto loginDto){
-//        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-//                loginDto.getUsernameOrEmail(), loginDto.getPassword()));
-//
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
-//        return new ResponseEntity<>("User signed-in successfully!.", HttpStatus.OK);
-//    }
 
+    @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginDto loginDto){
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
@@ -59,9 +50,12 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String jwt = tokenProvider.generateToken(authentication);
-        return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
+        int expiryDate = tokenProvider.getExpiryDate();
+
+        return ResponseEntity.ok(new JwtAuthenticationResponse(jwt, expiryDate));
     }
 
+    @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@RequestBody SignUpDto signUpDto){
 

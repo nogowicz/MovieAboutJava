@@ -1,5 +1,6 @@
 package com.movieabout.MovieAbout.repository;
 
+import com.movieabout.MovieAbout.model.Comment;
 import com.movieabout.MovieAbout.model.Post;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -17,6 +18,22 @@ public class PostRepository {
     public List<Post> getAll() {
         return jdbcTemplate.query("SELECT * FROM posts", BeanPropertyRowMapper.newInstance(Post.class));
     }
+    public List<Post> getAllPostsWithComments() {
+        List<Post> posts = jdbcTemplate.query("SELECT * FROM posts", BeanPropertyRowMapper.newInstance(Post.class));
+
+        for (Post post : posts) {
+            List<Comment> comments = jdbcTemplate.query(
+                    "SELECT * FROM comments WHERE postId = ?",
+                    new Object[]{post.getId()},
+                    BeanPropertyRowMapper.newInstance(Comment.class)
+            );
+
+            post.setComments(comments);
+        }
+
+        return posts;
+    }
+
 
     public Post getById(int idPost) {
         return jdbcTemplate.queryForObject("SELECT * FROM posts WHERE " +

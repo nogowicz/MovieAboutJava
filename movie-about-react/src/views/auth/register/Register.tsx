@@ -43,7 +43,7 @@ export default function Registration() {
     const onSubmit = async (data: RegistrationInputs) => {
         console.log("Data: ", data);
         try {
-            await axios.post("http://localhost:3000/register", data);
+            await axios.post("http://localhost:8080/api/auth/signup", data);
             navigate("/");
         } catch (error: any) {
             if (error && error instanceof AxiosError) {
