@@ -9,6 +9,7 @@ import jwt_decode from 'jwt-decode';
 import CommentsModal from '../../components/comments-modal';
 import Post, { PostType } from '../../components/post/Post';
 import { CommentType } from '../../components/comment/Comment';
+import FilterButtons from '../../components/filter-buttons';
 
 
 type DecodedToken = {
@@ -23,7 +24,7 @@ type DecodedToken = {
 
 export default function Posts() {
     const [posts, setPosts] = useState<PostType[]>([]);
-    const [activeTab, setActiveTab] = useState('all');
+    const [activeTab, setActiveTab] = useState<'all' | 'series' | 'movie'>('all');
     const [showModal, setShowModal] = useState(false)
     const [showCommentsModal, setShowCommentsModal] = useState(false);
     const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
@@ -68,7 +69,7 @@ export default function Posts() {
         }
     };
 
-    const handleTabClick = (tab: string) => {
+    const handleTabClick = (tab: 'all' | 'movie' | 'series') => {
         setActiveTab(tab);
     };
 
@@ -107,37 +108,7 @@ export default function Posts() {
             <div style={root}>
                 <Modal show={showModal} onClose={closeModal} postId={selectedPostId} />
                 <CommentsModal show={showCommentsModal} onClose={closeCommentsModal} postId={selectedPostId} />
-                <div style={conatiner}>
-                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                        <button style={{
-                            backgroundColor: activeTab === 'all' ? '#333' : '#eee',
-                            color: activeTab === 'all' ? '#fff' : '#333',
-                            ...filterButton
-                        }}
-                            onClick={() => handleTabClick('all')}
-                        >
-                            All
-                        </button>
-                        <button style={{
-                            backgroundColor: activeTab === 'movie' ? '#333' : '#eee',
-                            color: activeTab === 'movie' ? '#fff' : '#333',
-                            ...filterButton
-                        }}
-                            onClick={() => handleTabClick('movie')}
-                        >
-                            Movies
-                        </button>
-                        <button style={{
-                            backgroundColor: activeTab === 'series' ? '#333' : '#eee',
-                            color: activeTab === 'series' ? '#fff' : '#333',
-                            ...filterButton
-                        }}
-                            onClick={() => handleTabClick('series')}
-                        >
-                            TV Shows
-                        </button>
-                    </div>
-                </div>
+                <FilterButtons activeTab={activeTab} handleTabClick={handleTabClick} />
                 <main style={postsContainer}>
                     <section style={sectionContainer}>
                         {filteredPosts.length === 0 && <div style={noPostsContainer}>It's empty here. Add first post!</div>}
@@ -160,60 +131,7 @@ export default function Posts() {
 
                     </section>
                 </main>
-                <div
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        marginTop: '1rem',
-                        paddingLeft: '1rem',
-                        paddingRight: '1rem',
-                    }}
-                >
-                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                        <button
-                            style={{
-                                backgroundColor: activeTab === 'all' ? '#333' : '#eee',
-                                color: activeTab === 'all' ? '#fff' : '#333',
-                                padding: '0.5rem 1rem',
-                                borderRadius: '0.5rem',
-                                border: 'none',
-                                cursor: 'pointer',
-                                marginBottom: '0.5rem',
-                            }}
-                            onClick={() => handleTabClick('all')}
-                        >
-                            All
-                        </button>
-                        <button
-                            style={{
-                                backgroundColor: activeTab === 'movie' ? '#333' : '#eee',
-                                color: activeTab === 'movie' ? '#fff' : '#333',
-                                padding: '0.5rem 1rem',
-                                borderRadius: '0.5rem',
-                                border: 'none',
-                                cursor: 'pointer',
-                                marginBottom: '0.5rem',
-                            }}
-                            onClick={() => handleTabClick('movie')}
-                        >
-                            Movies
-                        </button>
-                        <button
-                            style={{
-                                backgroundColor: activeTab === 'series' ? '#333' : '#eee',
-                                color: activeTab === 'series' ? '#fff' : '#333',
-                                padding: '0.5rem 1rem',
-                                borderRadius: '0.5rem',
-                                border: 'none',
-                                cursor: 'pointer',
-                                marginBottom: '0.5rem',
-                            }}
-                            onClick={() => handleTabClick('series')}
-                        >
-                            TV Shows
-                        </button>
-                    </div>
-                </div>
+                <FilterButtons activeTab={activeTab} handleTabClick={handleTabClick} />
                 <Footer />
             </div>
         </>
@@ -228,21 +146,6 @@ const root: CSSProperties = {
     marginTop: 50
 };
 
-const conatiner: CSSProperties = {
-    display: 'flex',
-    justifyContent: 'center',
-    marginBottom: '1rem',
-    paddingLeft: '1rem',
-    paddingRight: '1rem',
-};
-
-const filterButton: CSSProperties = {
-    padding: '0.5rem 1rem',
-    borderRadius: '0.5rem',
-    border: 'none',
-    cursor: 'pointer',
-    marginBottom: '0.5rem',
-};
 
 const postsContainer: CSSProperties = {
     flex: 1,

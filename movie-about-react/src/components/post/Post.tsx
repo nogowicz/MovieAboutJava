@@ -1,12 +1,11 @@
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
 import jwt_decode from 'jwt-decode';
 import { useAuthUser } from 'react-auth-kit';
-import Comment from '../comment';
-
+import axios from 'axios';
+import { CSSProperties } from 'styled-components';
 import { CommentType } from '../comment/Comment';
 import { formatDate } from '../aside/Aside';
-import { CSSProperties } from 'styled-components';
-import axios from 'axios';
+import Comment from '../comment';
 
 export interface PostType {
     id: number;
