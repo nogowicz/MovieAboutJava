@@ -47,6 +47,7 @@ export default function Login() {
                 tokenType: response.data.tokenType,
                 authState: {
                     usernameOrEmail: data.usernameOrEmail,
+                    token: response.data.accessToken,
                 }
             });
             navigate("/");
@@ -71,7 +72,7 @@ export default function Login() {
                 <form onSubmit={handleSubmit(onSubmit)} style={formStyle}>
                     <h1 style={{ color: '#000', textAlign: 'center', fontSize: '2rem', fontWeight: 'bold' }}>Sign In</h1>
                     <div style={fieldStyle}>
-                        <label htmlFor="usernameOrEmail">Username Or Email:</label>
+                        <label htmlFor="usernameOrEmail">Username:</label>
                         <input
                             type="text"
                             style={{
