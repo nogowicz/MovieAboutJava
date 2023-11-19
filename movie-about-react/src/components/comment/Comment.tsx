@@ -20,7 +20,7 @@ type CommentProps = {
     posts: PostType[];
 };
 
-type DecodedToken = {
+export type DecodedToken = {
     sub: string;
     username: string;
     email: string;

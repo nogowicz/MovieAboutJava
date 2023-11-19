@@ -3,7 +3,7 @@ import jwt_decode from 'jwt-decode';
 import { useAuthUser } from 'react-auth-kit';
 import axios from 'axios';
 import { CSSProperties } from 'styled-components';
-import { CommentType } from '../comment/Comment';
+import { CommentType, DecodedToken } from '../comment/Comment';
 import { formatDate } from '../aside/Aside';
 import Comment from '../comment';
 
@@ -31,15 +31,6 @@ type PostProps = {
     showPostOptions: number | null;
     handleEditPost: (postId: number) => void;
 }
-
-type DecodedToken = {
-    sub: string;
-    username: string;
-    email: string;
-    roles: string[];
-    iat: number;
-    exp: number;
-};
 
 export default function Post({
     post,
