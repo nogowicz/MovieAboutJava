@@ -1,4 +1,4 @@
-import React, { CSSProperties, Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { CSSProperties, Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
 import { formatDate } from '../aside/Aside';
 import axios from 'axios';
 import { useAuthUser } from 'react-auth-kit';
@@ -86,7 +86,7 @@ export default function Comment({ comment, showModal, setPosts, posts }: Comment
         }
     };
 
-    const getUserRoles = () => {
+    const getUserRoles = useCallback(() => {
         try {
             const decodedToken: DecodedToken = jwt_decode(token);
             if (decodedToken && decodedToken.roles) {
@@ -99,11 +99,11 @@ export default function Comment({ comment, showModal, setPosts, posts }: Comment
             console.error('Error while decoding token', error);
             return [];
         }
-    };
+    }, [token]);
 
     useEffect(() => {
         getUserRoles();
-    }, []);
+    }, [getUserRoles]);
 
     return (
         <div style={root}>
