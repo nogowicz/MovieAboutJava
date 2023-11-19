@@ -1,18 +1,9 @@
 import React, { CSSProperties, useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { PostType } from '../post/Post';
 
-export interface Post {
-    id: number;
-    title: string;
-    date: Date;
-    content: string;
-    anonymous: boolean;
-    mediaType: 'movie' | 'series';
-    addedBy: string;
-    commentCount: number;
-    comments: any;
-}
+
 
 export const formatDate = (dateString: Date | string): string => {
     const date = new Date(dateString);
@@ -20,7 +11,7 @@ export const formatDate = (dateString: Date | string): string => {
     return date.toLocaleDateString('en-US', options);
 };
 export default function Aside() {
-    const [posts, setPosts] = useState<Post[]>([]);
+    const [posts, setPosts] = useState<PostType[]>([]);
     const navigation = useNavigate();
     const [isWideScreen, setIsWideScreen] = useState(window.innerWidth > 1200);
 
