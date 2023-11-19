@@ -27,7 +27,6 @@ export default function Posts() {
         try {
             const response = await axios.get('http://localhost:8080/api/posts/postsWithComments');
             setPosts(response.data);
-            console.log(response.data);
         } catch (error) {
             console.error('Error while fetching posts:', error);
         }
@@ -56,14 +55,7 @@ export default function Posts() {
 
     useEffect(() => {
         fetchPosts();
-    }, []);
-
-    useEffect(() => {
-        fetchPosts();
     }, [showModal, showCommentsModal]);
-
-
-
 
     return (
         <>
