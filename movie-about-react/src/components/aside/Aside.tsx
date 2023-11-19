@@ -1,38 +1,18 @@
-import React, { CSSProperties, useEffect, useState } from 'react';
+import { CSSProperties, useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { PostType } from '../post/Post';
+import AsidePost from '../aside-post';
 
 
 
-export const formatDate = (dateString: Date | string): string => {
-    const date = new Date(dateString);
-    const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
-    return date.toLocaleDateString('en-US', options);
-};
 export default function Aside() {
     const [posts, setPosts] = useState<PostType[]>([]);
     const navigation = useNavigate();
-    const [isWideScreen, setIsWideScreen] = useState(window.innerWidth > 1200);
-
-    useEffect(() => {
-        function handleResize() {
-            setIsWideScreen(window.innerWidth > 1200);
-        }
-
-        window.addEventListener('resize', handleResize);
-
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        };
-    }, []);
-
-    useEffect(() => {
-        fetchPosts();
-    }, []);
 
 
-
+    const sortedPosts = posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    const latestPosts = sortedPosts.slice(0, 2);
 
     const fetchPosts = async () => {
         try {
@@ -44,66 +24,29 @@ export default function Aside() {
         }
     };
 
+    useEffect(() => {
+        fetchPosts();
+    }, []);
+
     if (posts.length === 0) {
         return (
-            <div
-                style={asideStyles}
-                onClick={() => navigation('/posts')}
-            >
+            <div style={asideStyles} onClick={() => navigation('/posts')}>
                 <h2>All Posts</h2>
                 <div>It's empty here. Add first post!</div>
             </div>
         );
     }
 
-    const sortedPosts = posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-
-    const latestPosts = sortedPosts.slice(0, 2);
 
     return (
-        <div
-            style={asideStyles}
-            onClick={() => navigation('/posts')}
-        >
-            <h2
-                style={{
-                    marginBottom: 20,
-                }}
-            >Latest Posts</h2>
-
+        <div style={asideStyles} onClick={() => navigation('/posts')}>
+            <h2 style={{ marginBottom: 20 }}>Latest Posts</h2>
             {latestPosts.map((post) => (
-                <div
-                    key={post.id}
-                    style={{
-                        marginBottom: 20,
-                        width: isWideScreen ? '200px' : '',
-                        wordWrap: 'break-word',
-                    }}
-                >
-                    <h3>{post.title}</h3>
-                    {post.anonymous ? <p
-                        style={{
-                            fontSize: 14,
-                        }}
-                    >Anonymous</p> : <p
-                        style={{
-                            fontSize: 14,
-                        }}
-                    >{post.addedBy}</p>}
-                    <p>{post.content}</p>
-                    <p
-                        style={{
-                            fontSize: 14,
-                        }}
-                    >{formatDate(post.date)}</p>
-                </div>
+                <AsidePost key={post.id} {...post} />
             ))}
         </div>
     );
 }
-
-
-
 
 const asideStyles: CSSProperties = {
     flexBasis: '16em',

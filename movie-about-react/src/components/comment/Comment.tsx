@@ -1,9 +1,9 @@
 import { CSSProperties, Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
-import { formatDate } from '../aside/Aside';
 import axios from 'axios';
 import { useAuthUser } from 'react-auth-kit';
 import jwt_decode from 'jwt-decode';
 import { PostType } from '../post/Post';
+import { formatDate } from '../../utils/date';
 
 export type CommentType = {
     id: number;

@@ -4,8 +4,8 @@ import { useAuthUser } from 'react-auth-kit';
 import axios from 'axios';
 import { CSSProperties } from 'styled-components';
 import { CommentType, DecodedToken } from '../comment/Comment';
-import { formatDate } from '../aside/Aside';
 import Comment from '../comment';
+import { formatDate } from '../../utils/date';
 
 export interface PostType {
     id: number;
