@@ -69,6 +69,7 @@ export default function CommentsModal({ show, onClose, postId }: CommentsModalPr
             console.log(updatedData)
             const response = await axios.post(`http://localhost:8080/api/comments`, updatedData)
             console.log("Response: ", response);
+            onClose();
             reset();
 
 

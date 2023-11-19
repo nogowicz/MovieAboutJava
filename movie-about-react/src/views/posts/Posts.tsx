@@ -102,9 +102,9 @@ export default function Posts() {
         getUserRoles();
     }, []);
 
-    // useEffect(() => {
-    //     fetchPosts();
-    // }, [showCommentsModal, closeModal]);
+    useEffect(() => {
+        fetchPosts();
+    }, [showModal, showCommentsModal]);
 
 
 

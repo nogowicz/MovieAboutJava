@@ -18,7 +18,6 @@ export default function Modal({ show, onClose, postId }: ModalProps) {
     const [post, setPost] = useState<any>(null); // State przechowujący dane posta
     const authUser = useAuthUser();
     const username = authUser()?.usernameOrEmail || '';
-    const navigation = useNavigate();
 
     const {
         register,
@@ -32,7 +31,6 @@ export default function Modal({ show, onClose, postId }: ModalProps) {
     });
 
     useEffect(() => {
-
         const fetchPost = async () => {
             try {
                 const response = await axios.get(`http://localhost:8080/api/posts/${postId}`);
