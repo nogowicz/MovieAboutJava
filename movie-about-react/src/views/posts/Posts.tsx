@@ -2,25 +2,10 @@ import { CSSProperties, useEffect, useState } from 'react';
 import axios from 'axios';
 import Footer from '../../components/footer';
 import Navbar from '../../components/navbar';
-import { formatDate } from '../../components/aside/Aside';
-import { useAuthUser } from 'react-auth-kit';
 import Modal from '../../components/modal';
-import jwt_decode from 'jwt-decode';
 import CommentsModal from '../../components/comments-modal';
 import Post, { PostType } from '../../components/post/Post';
-import { CommentType } from '../../components/comment/Comment';
 import FilterButtons from '../../components/filter-buttons';
-
-
-type DecodedToken = {
-    sub: string;
-    username: string;
-    email: string;
-    roles: string[];
-    iat: number;
-    exp: number;
-};
-
 
 export default function Posts() {
     const [posts, setPosts] = useState<PostType[]>([]);
@@ -28,10 +13,6 @@ export default function Posts() {
     const [showModal, setShowModal] = useState(false)
     const [showCommentsModal, setShowCommentsModal] = useState(false);
     const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
-    const authUser = useAuthUser();
-    const username = authUser()?.usernameOrEmail || '';
-    const token = authUser()?.token || '';
-    const [userRole, setUserRole] = useState<string>('');
     const [showPostOptions, setShowPostsOptions] = useState<number | null>(null);
 
 
@@ -41,23 +22,6 @@ export default function Posts() {
         setSelectedPostId(postId);
     };
 
-
-
-    const getUserRoles = () => {
-        try {
-            const decodedToken: DecodedToken = jwt_decode(token);
-            console.log(decodedToken);
-            if (decodedToken && decodedToken.roles) {
-                setUserRole(decodedToken.roles[0]);
-            } else {
-                console.error('No roles info in token');
-                return [];
-            }
-        } catch (error) {
-            console.error('Error while decoding token', error);
-            return [];
-        }
-    };
 
     const fetchPosts = async () => {
         try {
@@ -92,7 +56,6 @@ export default function Posts() {
 
     useEffect(() => {
         fetchPosts();
-        getUserRoles();
     }, []);
 
     useEffect(() => {
@@ -127,8 +90,6 @@ export default function Posts() {
                                 handleEditPost={handleEditPost}
                             />
                         ))}
-
-
                     </section>
                 </main>
                 <FilterButtons activeTab={activeTab} handleTabClick={handleTabClick} />
