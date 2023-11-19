@@ -24,13 +24,13 @@ public class CommentRepository {
                 "id = ?", BeanPropertyRowMapper.newInstance(Comment.class), idComment);
     }
 
-    public int save(List<Comment> comments) {
-        comments.forEach(comment -> jdbcTemplate.update("INSERT INTO comments(postId, content, addedBy, created_at) VALUES (?, ?, ?, ?)",
+    public int save(Comment comment) {
+        jdbcTemplate.update("INSERT INTO comments(postId, content, addedBy, created_at) VALUES (?, ?, ?, ?)",
                 comment.getPostId(),
                 comment.getContent(),
                 comment.getAddedBy(),
                 comment.getCreatedAt()
-                ));
+        );
         return 1;
     }
 

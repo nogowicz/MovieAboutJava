@@ -39,8 +39,8 @@ public class PostController {
 
     @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("")
-    public int add(@RequestBody List<Post> posts) {
-        return postRepository.save(posts);
+    public int add(@RequestBody Post post) {
+        return postRepository.save(post);
     }
 
     @CrossOrigin(origins = "http://localhost:5173")
@@ -51,6 +51,7 @@ public class PostController {
             post.setTitle(updatedPost.getTitle());
             post.setContent(updatedPost.getContent());
             post.setMediaType(updatedPost.getMediaType());
+            post.setAnonymous(updatedPost.isAnonymous());
 
             postRepository.update(post);
 
@@ -69,6 +70,12 @@ public class PostController {
             if(updatedPost.getTitle() != null) post.setTitle(updatedPost.getTitle());
             if(updatedPost.getContent() != null) post.setContent(updatedPost.getContent());
             if(updatedPost.getMediaType() != null) post.setMediaType(updatedPost.getMediaType());
+            if(updatedPost.isAnonymous()) {
+                post.setAnonymous(true);
+            } else if (!updatedPost.isAnonymous()) {
+                post.setAnonymous(false);
+            }
+
 
             postRepository.update(post);
 

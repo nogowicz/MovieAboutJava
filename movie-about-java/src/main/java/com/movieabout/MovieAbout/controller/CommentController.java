@@ -29,7 +29,7 @@ public class CommentController {
 
     @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("")
-    public int add(@RequestBody List<Comment> comments) {
+    public int add(@RequestBody Comment comments) {
         return commentRepository.save(comments);
     }
 

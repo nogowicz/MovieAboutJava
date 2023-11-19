@@ -8,6 +8,7 @@ import { Inputs } from '../../views/add-post/AddPost';
 import { useAuthUser } from 'react-auth-kit';
 import { useNavigate } from 'react-router-dom';
 import { formatDate } from '../aside/Aside';
+import jwt_decode from 'jwt-decode';
 
 type CommentsModalProps = {
     show: boolean;
@@ -22,7 +23,8 @@ export default function CommentsModal({ show, onClose, postId }: CommentsModalPr
     const [comments, setComments] = useState<Comment[]>([]);
     const [userRole, setUserRole] = useState<string>('');
     const [showOptions, setShowOptions] = useState<number | null>(null);
-    const username = authUser()?.username || '';
+    const username = authUser()?.usernameOrEmail || '';
+    const token = authUser()?.token || '';
     const [isButtonHovered, setButtonHovered] = useState(false);
     const navigation = useNavigate();
 
@@ -38,12 +40,18 @@ export default function CommentsModal({ show, onClose, postId }: CommentsModalPr
 
 
 
-    const fetchUserRole = async () => {
+    const getUserRoles = () => {
         try {
-            const response = await axios.get(`http://localhost:3000/user-role?username=${username}`);
-            setUserRole(response.data.userRole);
+            const decodedToken: any = jwt_decode(token);
+            if (decodedToken && decodedToken.roles) {
+                setUserRole(decodedToken.roles[0]);
+            } else {
+                console.error('No roles info in token');
+                return [];
+            }
         } catch (error) {
-            console.error('Error while fetching user role:', error);
+            console.error('Error while decoding token', error);
+            return [];
         }
     };
 
@@ -54,9 +62,12 @@ export default function CommentsModal({ show, onClose, postId }: CommentsModalPr
         try {
             const updatedData = {
                 ...data,
+                postId: postId,
                 addedBy: username,
+                createdAt: new Date().toISOString()
             };
-            const response = await axios.post(`http://localhost:3000/posts/${postId}/comments`, updatedData)
+            console.log(updatedData)
+            const response = await axios.post(`http://localhost:8080/api/comments`, updatedData)
             console.log("Response: ", response);
             reset();
 
@@ -80,8 +91,8 @@ export default function CommentsModal({ show, onClose, postId }: CommentsModalPr
     }, [show, reset]);
 
     useEffect(() => {
-        fetchUserRole();
-    }, [fetchUserRole]);
+        getUserRoles();
+    }, []);
 
 
 

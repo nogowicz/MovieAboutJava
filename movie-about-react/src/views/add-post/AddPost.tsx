@@ -23,7 +23,7 @@ export type Inputs = {
 
 export default function AddPost() {
     const authUser = useAuthUser();
-    const username = authUser()?.username || '';
+    const username = authUser()?.usernameOrEmail || '';
     const navigation = useNavigate();
     const [isWideScreen, setIsWideScreen] = useState(window.innerWidth > 1200);
 
@@ -50,7 +50,8 @@ export default function AddPost() {
 
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
         try {
-            const response = await axios.post("http://localhost:3000/posts", data)
+            console.log(data)
+            const response = await axios.post("http://localhost:8080/api/posts", data)
             console.log("Response: ", response);
             navigation('/posts');
 

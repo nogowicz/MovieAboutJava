@@ -40,23 +40,24 @@ public class PostRepository {
                 "id = ?", BeanPropertyRowMapper.newInstance(Post.class), idPost);
     }
 
-    public int save(List<Post> posts) {
-        posts.forEach(post -> jdbcTemplate.update("INSERT INTO posts(title, date, content, anonymous, mediaType, addedBy) VALUES(?, ?, ?, ?, ?, ?)",
+    public int save(Post post) {
+        jdbcTemplate.update("INSERT INTO posts(title, date, content, anonymous, mediaType, addedBy) VALUES(?, ?, ?, ?, ?, ?)",
                     post.getTitle(),
                     post.getDate(),
                     post.getContent(),
                     post.isAnonymous(),
                     post.getMediaType(),
                     post.getAddedBy()
-                ));
+                );
         return 1;
     }
 
     public int update(Post post) {
-        return jdbcTemplate.update("UPDATE posts SET title=?, content=?, mediaType=? WHERE id=?",
+        return jdbcTemplate.update("UPDATE posts SET title=?, content=?, mediaType=?, anonymous=? WHERE id=?",
                 post.getTitle(),
                 post.getContent(),
                 post.getMediaType(),
+                post.isAnonymous(),
                 post.getId()
         );
     }

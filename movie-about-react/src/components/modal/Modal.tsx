@@ -17,7 +17,7 @@ type ModalProps = {
 export default function Modal({ show, onClose, postId }: ModalProps) {
     const [post, setPost] = useState<any>(null); // State przechowujący dane posta
     const authUser = useAuthUser();
-    const username = authUser()?.username || '';
+    const username = authUser()?.usernameOrEmail || '';
     const navigation = useNavigate();
 
     const {
@@ -35,7 +35,7 @@ export default function Modal({ show, onClose, postId }: ModalProps) {
 
         const fetchPost = async () => {
             try {
-                const response = await axios.get(`http://localhost:3000/posts/${postId}`);
+                const response = await axios.get(`http://localhost:8080/api/posts/${postId}`);
                 setPost(response.data);
                 setValue('title', response.data.title);
                 setValue('content', response.data.content);
@@ -57,12 +57,12 @@ export default function Modal({ show, onClose, postId }: ModalProps) {
         try {
             if (postId) {
                 const formattedDate = new Date(data.date).toISOString().split('T')[0];
-
+                console.log(data)
                 const updatedData = {
                     ...data,
                     date: formattedDate,
                 };
-                const response = await axios.put(`http://localhost:3000/posts/${postId}`, updatedData);
+                const response = await axios.put(`http://localhost:8080/api/posts/${postId}`, updatedData);
                 console.log('Response: ', response);
                 onClose();
 

@@ -13,7 +13,8 @@ import CommentsModal from '../../components/comments-modal';
 export default function Posts() {
     const [posts, setPosts] = useState<Post[]>([]);
     const [activeTab, setActiveTab] = useState('all');
-    const [showOptions, setShowOptions] = useState<number | null>(null);
+    const [showPostOptions, setShowPostsOptions] = useState<number | null>(null);
+    const [showCommentOptions, setShowCommentOptions] = useState<number | null>(null);
     const [showModal, setShowModal] = useState(false);
     const [showCommentsModal, setShowCommentsModal] = useState(false);
     const authUser = useAuthUser();
@@ -26,7 +27,6 @@ export default function Posts() {
     const getUserRoles = () => {
         try {
             const decodedToken: any = jwt_decode(token);
-
             if (decodedToken && decodedToken.roles) {
                 setUserRole(decodedToken.roles[0]);
             } else {
@@ -57,16 +57,22 @@ export default function Posts() {
 
     const handleDeletePost = async (postId: number) => {
         try {
-            await axios.delete(`http://localhost:3000/posts/${postId}`);
+            await axios.delete(`http://localhost:8080/api/posts/${postId}`);
             setPosts(posts.filter((post) => post.id !== postId));
         } catch (error) {
             console.error('Error while deleting post:', error);
         }
     };
 
-    const handleDeleteComment = async (commentId: number) => {
+    const handleDeleteComment = async (commentId: number, postId: number) => {
         try {
-            await axios.delete(`http://localhost:3000/posts/comments/${commentId}`);
+            await axios.delete(`http://localhost:8080/api/comments/${commentId}`);
+            setPosts(posts.map((post) => {
+                if (post.id === postId) {
+                    post.comments = post.comments.filter((comment: any) => comment.id !== commentId);
+                }
+                return post;
+            }));
         } catch (error) {
             console.error('Error while deleting comment:', error);
         }
@@ -74,7 +80,7 @@ export default function Posts() {
 
     const handleEditPost = (postId: number) => {
         setShowModal(true);
-        setShowOptions(null);
+        setShowPostsOptions(null);
         setSelectedPostId(postId);
     };
 
@@ -104,11 +110,11 @@ export default function Posts() {
 
     const renderOptions = (post: Post) => {
         const handleOptionsClick = (postId: number) => {
-            if (showOptions === postId) {
-                setShowOptions(null);
+            if (showPostOptions === postId) {
+                setShowPostsOptions(null);
             } else {
                 if (!showModal) {
-                    setShowOptions(postId);
+                    setShowPostsOptions(postId);
                 }
             }
         };
@@ -153,7 +159,7 @@ export default function Posts() {
                         &#8230;
                     </span>
                 </div>
-                {showOptions === post.id && (
+                {showPostOptions === post.id && (
                     <ul
                         style={{
                             position: 'absolute',
@@ -201,10 +207,10 @@ export default function Posts() {
 
     const renderCommentOptions = (comment: any) => {
         const handleOptionsClick = (commentId: number) => {
-            if (showOptions === commentId) {
-                setShowOptions(null);
+            if (showCommentOptions === commentId) {
+                setShowCommentOptions(null);
             } else {
-                setShowOptions(commentId);
+                setShowCommentOptions(commentId);
             }
         };
 
@@ -246,7 +252,7 @@ export default function Posts() {
                         &#8230;
                     </span>
                 </div>
-                {showOptions === comment.id && (
+                {showCommentOptions === comment.id && (
                     <ul
                         style={{
                             position: 'absolute',
@@ -270,7 +276,7 @@ export default function Posts() {
                                 borderRadius: '0.25rem',
                                 background: '#FF0000',
                             }}
-                            onClick={() => handleDeleteComment(comment.id)}
+                            onClick={() => handleDeleteComment(comment.id, comment.postId)}
                         >
                             Delete
                         </li>
@@ -420,7 +426,7 @@ export default function Posts() {
                                             {(comment.addedBy === username || userRole === "ROLE_ADMIN") && renderCommentOptions(comment)}
                                             <p style={{ color: '#666', marginBottom: '0.5em' }}>{comment.content}</p>
                                             <p style={{ color: '#999' }}>Author: {comment.addedBy}</p>
-                                            <p style={{ color: '#999' }}>Date: {formatDate(comment.created_at)}</p>
+                                            <p style={{ color: '#999' }}>Date: {formatDate(comment.createdAt)}</p>
                                         </div>
                                     ))}
                                 </div>
