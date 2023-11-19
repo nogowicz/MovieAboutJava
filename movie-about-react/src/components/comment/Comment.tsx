@@ -42,7 +42,6 @@ export default function Comment({ comment, showModal, setPosts, posts }: Comment
 
     const renderCommentOptions = () => {
         const handleOptionsClick = (commentId: number) => {
-            console.log(showCommentOptions)
             if (showCommentOptions === commentId) {
                 setShowCommentOptions(null);
             } else {

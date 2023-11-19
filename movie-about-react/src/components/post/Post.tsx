@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
 import jwt_decode from 'jwt-decode';
 import { useAuthUser } from 'react-auth-kit';
 import Comment from '../comment';
@@ -52,13 +52,13 @@ export default function Post({
     setShowPostsOptions,
     handleEditPost
 }: PostProps) {
-    const { id, title, date, content, anonymous, mediaType, addedBy, commentCount, comments } = post;
+    const { id, title, date, content, anonymous, addedBy, comments } = post;
     const authUser = useAuthUser();
     const username = authUser()?.usernameOrEmail || '';
     const token = authUser()?.token || '';
     const [userRole, setUserRole] = useState<string>('');
 
-
+    const canEdit = addedBy === username || userRole === "ROLE_ADMIN";
 
     const handleDeletePost = async (postId: number) => {
         try {
@@ -69,9 +69,7 @@ export default function Post({
         }
     };
 
-
-
-    const getUserRoles = () => {
+    const getUserRoles = useCallback(() => {
         try {
             const decodedToken: DecodedToken = jwt_decode(token);
             if (decodedToken && decodedToken.roles) {
@@ -84,7 +82,12 @@ export default function Post({
             console.error('Error while decoding token', error);
             return [];
         }
-    };
+    }, [token]);
+
+    useEffect(() => {
+        getUserRoles();
+    }, [getUserRoles]);
+
 
     const renderOptions = () => {
         const handleOptionsClick = (postId: number) => {
@@ -96,8 +99,6 @@ export default function Post({
                 }
             }
         };
-
-
 
         return (
             <div style={optionsContainer}>
@@ -118,39 +119,15 @@ export default function Post({
         );
     };
 
-    useEffect(() => {
-        getUserRoles();
-    }, []);
 
     return (
-        <div
-            key={id}
-            style={{
-                margin: '1rem auto',
-                padding: '1rem',
-                borderRadius: '0.5em',
-                background: '#fff',
-                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-                color: '#333',
-                maxWidth: '100%',
-                width: '1700px',
-                wordWrap: 'break-word',
-            }}
-        >
-            {(addedBy === username || userRole === "ROLE_ADMIN") && renderOptions()}
-            <h2 style={{ color: '#000', fontSize: '1.5em', marginBottom: '0.5em' }}>{title}</h2>
-            <p style={{ color: '#666', marginBottom: '0.5em' }}>{content}</p>
+        <div style={root}>
+            {canEdit && renderOptions()}
+            <h2 style={titleText}>{title}</h2>
+            <p style={contentText}>{content}</p>
             <p style={{ color: '#999' }}>Author: {anonymous ? 'Anonymous' : addedBy}</p>
             <p style={{ color: '#999' }}>Date: {formatDate(date)}</p>
-            <p style={{
-                color: '#000',
-                fontWeight: 'bold',
-                cursor: 'pointer',
-                marginTop: 10,
-                marginBottom: 10,
-            }}
-                onClick={() => handleCommentsModal(id)}
-            >Add Comment</p>
+            <p style={addCommentButton} onClick={() => handleCommentsModal(id)}>Add Comment</p>
             <div>
                 {comments.map((comment: CommentType) => (
                     <Comment
@@ -224,4 +201,28 @@ const editOption: CSSProperties = {
     padding: '0.25rem 0.5rem',
     borderRadius: '0.25rem',
     background: '#eee',
+};
+
+const root: CSSProperties = {
+    margin: '1rem auto',
+    padding: '1rem',
+    borderRadius: '0.5em',
+    background: '#fff',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+    color: '#333',
+    maxWidth: '100%',
+    width: '1700px',
+    wordWrap: 'break-word',
+};
+
+const titleText: CSSProperties = { color: '#000', fontSize: '1.5em', marginBottom: '0.5em' };
+
+const contentText: CSSProperties = { color: '#666', marginBottom: '0.5em' };
+
+const addCommentButton: CSSProperties = {
+    color: '#000',
+    fontWeight: 'bold',
+    cursor: 'pointer',
+    marginTop: 10,
+    marginBottom: 10,
 };
