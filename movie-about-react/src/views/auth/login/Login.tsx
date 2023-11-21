@@ -1,12 +1,12 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { loginSchema } from './validationSchema';
-import { CSSProperties } from 'styled-components';
+import { useState } from 'react';
 import axios, { AxiosError } from 'axios';
-import { useSignIn } from 'react-auth-kit';
-import Navbar from '../../../components/navbar';
+import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import { CSSProperties } from 'styled-components';
+import { useSignIn } from 'react-auth-kit';
+import { loginSchema } from './validationSchema';
+import Navbar from '../../../components/navbar';
 
 interface Inputs {
     usernameOrEmail: string;
@@ -20,8 +20,6 @@ interface ResponseType {
         tokenType: string;
     }
 }
-
-
 
 export default function Login() {
     const [isButtonHovered, setButtonHovered] = useState(false);
@@ -51,6 +49,7 @@ export default function Login() {
                 }
             });
             navigate("/");
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             if (error && error instanceof AxiosError) {
                 if (error.response) {
@@ -70,7 +69,7 @@ export default function Login() {
             <Navbar mode='unauth' />
             <div style={formContainerStyle}>
                 <form onSubmit={handleSubmit(onSubmit)} style={formStyle}>
-                    <h1 style={{ color: '#000', textAlign: 'center', fontSize: '2rem', fontWeight: 'bold' }}>Sign In</h1>
+                    <h1 style={title}>Sign In</h1>
                     <div style={fieldStyle}>
                         <label htmlFor="usernameOrEmail">Username:</label>
                         <input
@@ -105,11 +104,11 @@ export default function Login() {
                     >
                         Sign In
                     </button>
-                    <div style={{ color: '#000', textAlign: 'center', fontSize: '1.2rem', marginBottom: -20 }}>
+                    <div style={subtitle}>
                         Don't have an account yet?
                     </div>
                     <div
-                        style={{ color: '#000', textAlign: 'center', fontSize: '1.2rem', fontWeight: 'bold', cursor: 'pointer' }}
+                        style={buttonText}
                         onClick={() => navigate("/register")}
                     >
                         Sign up Here!
@@ -185,3 +184,9 @@ const buttonStyle: CSSProperties = {
 const buttonHoverStyle: CSSProperties = {
     backgroundColor: '#66f',
 };
+
+const title: CSSProperties = { color: '#000', textAlign: 'center', fontSize: '2rem', fontWeight: 'bold' };
+
+const subtitle: CSSProperties = { color: '#000', textAlign: 'center', fontSize: '1.2rem', marginBottom: -20 };
+
+const buttonText: CSSProperties = { color: '#000', textAlign: 'center', fontSize: '1.2rem', fontWeight: 'bold', cursor: 'pointer' };
