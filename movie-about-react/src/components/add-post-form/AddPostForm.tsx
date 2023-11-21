@@ -5,18 +5,21 @@ import { useAuthUser } from 'react-auth-kit';
 import { schema } from '../../views/add-post/validationSchema';
 import { Inputs } from '../../views/add-post/AddPost';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useNavigate } from 'react-router-dom';
 
 type AddPostFormProps = {
-    show: boolean;
-    onClose: () => void;
-    postId: number | null;
+    show?: boolean;
+    onClose?: () => void;
+    postId?: number | null;
+    modify?: boolean
 };
 
-export default function AddPostForm({ show, onClose, postId }: AddPostFormProps) {
+export default function AddPostForm({ show, onClose, postId, modify = false }: AddPostFormProps) {
     const [isButtonHovered, setButtonHovered] = useState(false);
     const [isCheckboxChecked, setCheckboxChecked] = useState(false);
     const authUser = useAuthUser();
     const username = authUser()?.usernameOrEmail || '';
+    const navigation = useNavigate();
     const {
         register,
         handleSubmit,
@@ -28,7 +31,28 @@ export default function AddPostForm({ show, onClose, postId }: AddPostFormProps)
         resolver: yupResolver(schema),
     });
 
-    const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    const onSubmitAddPost: SubmitHandler<Inputs> = async (data) => {
+        try {
+            console.log(data)
+            const response = await axios.post("http://localhost:8080/api/posts", data)
+            console.log("Response: ", response);
+            navigation('/posts');
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error: any) {
+            if (error.response) {
+                setError("title", { message: error.response.data });
+                setError("date", { message: error.response.data });
+                setError("content", { message: error.response.data });
+                console.log(error)
+            } else {
+                setError("title", { message: "An error occurred. Please try again later." });
+                setError("date", { message: "An error occurred. Please try again later." });
+                setError("content", { message: "An error occurred. Please try again later." });
+            }
+        }
+    };
+
+    const onSubmitEditPost: SubmitHandler<Inputs> = async (data) => {
         try {
             if (postId) {
                 const formattedDate = new Date(data.date).toISOString().split('T')[0];
@@ -39,7 +63,9 @@ export default function AddPostForm({ show, onClose, postId }: AddPostFormProps)
                 };
                 const response = await axios.put(`http://localhost:8080/api/posts/${postId}`, updatedData);
                 console.log('Response: ', response);
-                onClose();
+                if (onClose) {
+                    onClose();
+                }
 
             }
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -74,10 +100,10 @@ export default function AddPostForm({ show, onClose, postId }: AddPostFormProps)
     }, [postId, setValue]);
 
     useEffect(() => {
-        if (postId !== null) {
+        if (postId !== null && modify) {
             fetchPost();
         }
-    }, [fetchPost, postId, setValue]);
+    }, [fetchPost, postId, setValue, modify]);
 
 
 
@@ -91,7 +117,7 @@ export default function AddPostForm({ show, onClose, postId }: AddPostFormProps)
 
     return (
         <form
-            onSubmit={handleSubmit(onSubmit)}
+            onSubmit={handleSubmit(modify ? onSubmitEditPost : onSubmitAddPost)}
             style={form}
         >
             <label style={labelStyle}>

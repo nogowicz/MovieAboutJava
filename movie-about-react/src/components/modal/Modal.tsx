@@ -28,6 +28,7 @@ export default function Modal({ show, onClose, postId }: ModalProps) {
                                 onClose={onClose}
                                 postId={postId}
                                 show={show}
+                                modify
                             />
                         </div>
                     </div>
