@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { registrationSchema } from './validationSchema';
 import { CSSProperties } from 'styled-components';
 import axios, { AxiosError } from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { registrationSchema } from './validationSchema';
 import Navbar from '../../../components/navbar';
 
 interface RegistrationInputs {
@@ -41,11 +41,10 @@ export default function Registration() {
     });
 
     const onSubmit = async (data: RegistrationInputs) => {
-        console.log("Data: ", data);
         try {
             await axios.post("http://localhost:8080/api/auth/signup", data);
             navigate("/");
-        } catch (error: any) {
+        } catch (error: unknown) {
             if (error && error instanceof AxiosError) {
                 if (error.response) {
                     setError(errorsTable[error.response.data], { message: error.response.data });

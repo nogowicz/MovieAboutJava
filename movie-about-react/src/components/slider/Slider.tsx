@@ -1,16 +1,9 @@
-import React, { CSSProperties, useEffect, useState } from 'react'
+import { CSSProperties, useCallback, useEffect, useState } from 'react'
 
 
 export default function Slider({ slides }: { slides: { url: string }[] }) {
     const [currentIndex, setCurrentIndex] = useState(0);
-
-    useEffect(() => {
-        const interval = setInterval(goToNext, 10000);
-
-        return () => {
-            clearInterval(interval);
-        };
-    }, []);
+    const [, setWindowWidth] = useState(window.innerWidth);
 
 
     const goToPrevious = () => {
@@ -18,11 +11,12 @@ export default function Slider({ slides }: { slides: { url: string }[] }) {
         const newIndex = isFirstSlide ? slides.length - 1 : currentIndex - 1;
         setCurrentIndex(newIndex);
     };
-    const goToNext = () => {
+    const goToNext = useCallback(() => {
         const isLastSlide = currentIndex === slides.length - 1;
         const newIndex = isLastSlide ? 0 : currentIndex + 1;
         setCurrentIndex(newIndex);
-    };
+    }, [currentIndex, slides.length]);
+
     const goToSlide = (slideIndex: number) => {
         setCurrentIndex(slideIndex);
     };
@@ -31,8 +25,15 @@ export default function Slider({ slides }: { slides: { url: string }[] }) {
         backgroundImage: `url(${slides[currentIndex].url})`,
     };
 
+    useEffect(() => {
+        const interval = setInterval(goToNext, 10000);
 
-    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+        return () => {
+            clearInterval(interval);
+        };
+    }, [goToNext]);
+
+
 
     useEffect(() => {
         const handleResize = () => {
@@ -59,7 +60,7 @@ export default function Slider({ slides }: { slides: { url: string }[] }) {
             </div>
             <div style={slideStylesWidthBackground}></div>
             <div style={dotsContainerStyles}>
-                {slides.map((slide: { url: string }, slideIndex: number) => (
+                {slides.map((_slide: { url: string }, slideIndex: number) => (
                     <div
                         style={dotStyle}
                         key={slideIndex}

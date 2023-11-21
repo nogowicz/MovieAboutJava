@@ -1,11 +1,9 @@
-import React from 'react';
-import Navbar from '../components/navbar';
+import { Routes, Route, } from 'react-router-dom';
+import { RequireAuth } from 'react-auth-kit';
 import Home from '../views/home'
 import History from '../views/history';
 import AddPost from '../views/add-post'
-import { Routes, Route, } from 'react-router-dom';
 import Login from '../views/auth/login';
-import { RequireAuth } from 'react-auth-kit';
 import Register from '../views/auth/register';
 import Posts from '../views/posts';
 function Main() {
