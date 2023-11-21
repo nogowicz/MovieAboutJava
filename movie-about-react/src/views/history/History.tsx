@@ -1,11 +1,8 @@
-import Slider from '../../components/slider';
-
-
+import { useState, useEffect } from 'react';
+import { CSSProperties } from 'styled-components';
 import Aside from '../../components/aside';
 import Footer from '../../components/footer';
-import { CSSProperties } from 'styled-components';
 import Navbar from '../../components/navbar';
-import { useState, useEffect } from 'react';
 
 export default function History() {
     const [isWideScreen, setIsWideScreen] = useState(window.innerWidth > 1200);
@@ -25,46 +22,15 @@ export default function History() {
     return (
         <>
             <Navbar mode='auth' />
-            <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-                <main style={{
-                    flex: 1,
-                    flexDirection: isWideScreen ? 'row' : 'column',
-                    display: 'flex',
-                    padding: '1rem',
-                    justifyContent: 'center',
-                    gap: 20,
-                }}>
+            <div style={root}>
+                <main style={container}>
                     <section style={{
-                        flexGrow: 1,
-                        background: '#eceef3',
-                        borderRadius: '1em',
-                        padding: '2em',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        textAlign: 'center'
-
+                        ...section,
+                        flexDirection: isWideScreen ? 'row' : 'column',
                     }}>
                         <div>
-                            <h1 style={{
-                                textAlign: 'center',
-                                fontFamily: 'sans-serif',
-                                fontSize: '2em',
-                                color: '#000'
-                            }}
-                            >
-
-                                History of Cinema
-
-
-                            </h1>
-
-                            <div style={{
-                                color: '#000',
-                                fontFamily: 'sans-serif',
-                                fontSize: '1em',
-                                textAlign: 'justify'
-
-                            }}>
+                            <h1 style={title}>History of Cinema</h1>
+                            <div style={textContainer}>
                                 <h2 style={subtitleStyle}>From the beginning...</h2>
                                 Cinema is the illusion of motion created by capturing a vast number of photographic images and then rapidly projecting them onto a screen.
                                 Initially born out of scientific endeavors in the 19th century, cinema has evolved into a medium of mass entertainment and communication.
@@ -114,7 +80,6 @@ export default function History() {
                                 Whether this will be more than a short-term phenomenon (like previous attempts at 3D in the 1950s and 1980s) remains to be seen, although the trend toward 3D production has brought greater investments and industry engagement than before.
                             </div>
                         </div>
-
                     </section>
                     <Aside />
                 </main>
@@ -126,10 +91,40 @@ export default function History() {
 
 
 
-const containerStyles = {
-    width: "800px",
-    height: "500px",
-    margin: "0 auto",
+const root: CSSProperties = { display: 'flex', flexDirection: 'column', minHeight: '100vh' };
+
+const container: CSSProperties = {
+    flex: 1,
+    display: 'flex',
+    padding: '1rem',
+    justifyContent: 'center',
+    gap: 20,
+};
+
+const section: CSSProperties = {
+    flexGrow: 1,
+    background: '#eceef3',
+    borderRadius: '1em',
+    padding: '2em',
+    display: 'flex',
+    flexDirection: 'column',
+    textAlign: 'center'
+
+};
+
+const title: CSSProperties = {
+    textAlign: 'center',
+    fontFamily: 'sans-serif',
+    fontSize: '2em',
+    color: '#000'
+};
+
+const textContainer: CSSProperties = {
+    color: '#000',
+    fontFamily: 'sans-serif',
+    fontSize: '1em',
+    textAlign: 'justify'
+
 };
 
 const subtitleStyle: CSSProperties = {
