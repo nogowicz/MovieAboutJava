@@ -1,10 +1,10 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useState } from 'react';
 import axios, { AxiosError } from 'axios';
+import { useSignIn } from 'react-auth-kit';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { CSSProperties } from 'styled-components';
-import { useSignIn } from 'react-auth-kit';
 import { loginSchema } from './validationSchema';
 import Navbar from '../../../components/navbar';
 
@@ -38,7 +38,6 @@ export default function Login() {
         try {
             const response: ResponseType = await axios.post("http://localhost:8080/api/auth/signin", data);
 
-            console.log(response.data)
             signIn({
                 token: response.data.accessToken,
                 expiresIn: response.data.expiresIn,
