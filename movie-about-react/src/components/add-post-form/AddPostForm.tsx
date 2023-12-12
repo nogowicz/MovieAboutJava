@@ -5,7 +5,7 @@ import { useAuthUser } from 'react-auth-kit';
 import { schema } from '../../views/add-post/validationSchema';
 import { Inputs } from '../../views/add-post/AddPost';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useNavigate } from 'react-router-dom';
+import { usePosts } from '../../hooks/usePosts';
 
 type AddPostFormProps = {
     show?: boolean;
@@ -19,7 +19,7 @@ export default function AddPostForm({ show, onClose, postId, modify = false }: A
     const [isCheckboxChecked, setCheckboxChecked] = useState(false);
     const authUser = useAuthUser();
     const username = authUser()?.usernameOrEmail || '';
-    const navigation = useNavigate();
+    const { addPost, editPost } = usePosts();
     const {
         register,
         handleSubmit,
@@ -33,8 +33,7 @@ export default function AddPostForm({ show, onClose, postId, modify = false }: A
 
     const onSubmitAddPost: SubmitHandler<Inputs> = async (data) => {
         try {
-            await axios.post("http://localhost:8080/api/posts", data)
-            navigation('/posts');
+            await addPost(data);
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             if (error.response) {
@@ -57,7 +56,7 @@ export default function AddPostForm({ show, onClose, postId, modify = false }: A
                     ...data,
                     date: formattedDate,
                 };
-                await axios.put(`http://localhost:8080/api/posts/${postId}`, updatedData);
+                editPost(updatedData, postId);
                 if (onClose) {
                     onClose();
                 }

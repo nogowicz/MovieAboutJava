@@ -1,11 +1,11 @@
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
 import jwt_decode from 'jwt-decode';
 import { useAuthUser } from 'react-auth-kit';
-import axios from 'axios';
 import { CSSProperties } from 'styled-components';
 import { CommentType, DecodedToken } from '../comment/Comment';
 import Comment from '../comment';
 import { formatDate } from '../../utils/date';
+import { usePosts } from '../../hooks/usePosts';
 
 export interface PostType {
     id: number;
@@ -47,12 +47,13 @@ export default function Post({
     const username = authUser()?.usernameOrEmail || '';
     const token = authUser()?.token || '';
     const [userRole, setUserRole] = useState<string>('');
+    const { deletePost } = usePosts();
 
     const canEdit = addedBy === username || userRole === "ROLE_ADMIN";
 
     const handleDeletePost = async (postId: number) => {
         try {
-            await axios.delete(`http://localhost:8080/api/posts/${postId}`);
+            deletePost(postId);
             setPosts(posts.filter((post) => post.id !== postId));
         } catch (error) {
             console.error('Error while deleting post:', error);

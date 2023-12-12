@@ -1,11 +1,11 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import axios from 'axios';
 import { CSSProperties, useEffect, useState } from 'react';
 import { useAuthUser } from 'react-auth-kit';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { FaTimes } from 'react-icons/fa';
 import { Inputs } from '../../views/add-post/AddPost';
 import { schema } from './validationSchema';
+import { usePosts } from '../../hooks/usePosts';
 
 type CommentsModalProps = {
     show: boolean;
@@ -19,6 +19,7 @@ export default function CommentsModal({ show, onClose, postId }: CommentsModalPr
     const authUser = useAuthUser();
     const username = authUser()?.usernameOrEmail || '';
     const [isButtonHovered, setButtonHovered] = useState(false);
+    const { addComment } = usePosts();
 
     const {
         register,
@@ -39,7 +40,7 @@ export default function CommentsModal({ show, onClose, postId }: CommentsModalPr
                 addedBy: username,
                 createdAt: new Date().toISOString()
             };
-            await axios.post(`http://localhost:8080/api/comments`, updatedData)
+            addComment(updatedData);
             onClose();
             reset();
 

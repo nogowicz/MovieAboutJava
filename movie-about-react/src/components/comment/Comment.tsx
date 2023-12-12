@@ -1,9 +1,9 @@
 import { CSSProperties, Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
-import axios from 'axios';
 import { useAuthUser } from 'react-auth-kit';
 import jwt_decode from 'jwt-decode';
 import { PostType } from '../post/Post';
 import { formatDate } from '../../utils/date';
+import { usePosts } from '../../hooks/usePosts';
 
 export type CommentType = {
     id: number;
@@ -37,6 +37,7 @@ export default function Comment({ comment, showModal, setPosts, posts }: Comment
     const username = authUser()?.usernameOrEmail || '';
     const token = authUser()?.token || '';
     const [userRole, setUserRole] = useState<string>('');
+    const { deleteComment } = usePosts();
 
     const canEdit = addedBy === username || userRole === "ROLE_ADMIN";
 
@@ -73,7 +74,7 @@ export default function Comment({ comment, showModal, setPosts, posts }: Comment
 
     const handleDeleteComment = async (commentId: number, postId: number) => {
         try {
-            await axios.delete(`http://localhost:8080/api/comments/${commentId}`);
+            deleteComment(commentId);
             setPosts(posts.map((post) => {
                 if (post.id === postId) {
                     post.comments = post.comments.filter((comment: CommentType) => comment.id !== commentId);
