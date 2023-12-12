@@ -48,7 +48,6 @@ export default function CommentsModal({ show, onClose, postId }: CommentsModalPr
         } catch (error: any) {
             if (error.response) {
                 setError("content", { message: error.response.data });
-                console.log(error)
             } else {
                 setError("content", { message: "An error occurred. Please try again later." });
             }

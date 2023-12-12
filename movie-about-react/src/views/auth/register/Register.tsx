@@ -49,7 +49,6 @@ export default function Registration() {
             if (error && error instanceof AxiosError) {
                 if (error.response) {
                     setError(errorsTable[error.response.data], { message: error.response.data });
-                    console.log(error)
                 } else {
                     setError("username", { message: "An error occurred. Please try again later." });
                     setError("password", { message: "An error occurred. Please try again later." });

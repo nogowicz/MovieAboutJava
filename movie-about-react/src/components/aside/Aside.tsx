@@ -18,7 +18,6 @@ export default function Aside() {
         try {
             const response = await axios.get('http://localhost:8080/api/posts/postsWithComments');
             setPosts(response.data);
-            console.log(response.data);
         } catch (error) {
             console.error('Error while fetching posts:', error);
         }

@@ -34,7 +34,6 @@ export default function Login() {
                 if (error.response) {
                     setError("usernameOrEmail", { message: error.response.data });
                     setError("usernameOrEmail", { message: error.response.data });
-                    console.log(error)
                 } else {
                     setError("usernameOrEmail", { message: "An error occurred. Please try again later." });
                     setError("password", { message: "An error occurred. Please try again later." });

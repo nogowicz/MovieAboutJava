@@ -33,9 +33,7 @@ export default function AddPostForm({ show, onClose, postId, modify = false }: A
 
     const onSubmitAddPost: SubmitHandler<Inputs> = async (data) => {
         try {
-            console.log(data)
-            const response = await axios.post("http://localhost:8080/api/posts", data)
-            console.log("Response: ", response);
+            await axios.post("http://localhost:8080/api/posts", data)
             navigation('/posts');
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
@@ -43,7 +41,6 @@ export default function AddPostForm({ show, onClose, postId, modify = false }: A
                 setError("title", { message: error.response.data });
                 setError("date", { message: error.response.data });
                 setError("content", { message: error.response.data });
-                console.log(error)
             } else {
                 setError("title", { message: "An error occurred. Please try again later." });
                 setError("date", { message: "An error occurred. Please try again later." });
@@ -56,13 +53,11 @@ export default function AddPostForm({ show, onClose, postId, modify = false }: A
         try {
             if (postId) {
                 const formattedDate = new Date(data.date).toISOString().split('T')[0];
-                console.log(data)
                 const updatedData = {
                     ...data,
                     date: formattedDate,
                 };
-                const response = await axios.put(`http://localhost:8080/api/posts/${postId}`, updatedData);
-                console.log('Response: ', response);
+                await axios.put(`http://localhost:8080/api/posts/${postId}`, updatedData);
                 if (onClose) {
                     onClose();
                 }
@@ -74,7 +69,6 @@ export default function AddPostForm({ show, onClose, postId, modify = false }: A
                 setError("title", { message: error.response.data });
                 setError("date", { message: error.response.data });
                 setError("content", { message: error.response.data });
-                console.log(error)
             } else {
                 setError("title", { message: "An error occurred. Please try again later." });
                 setError("date", { message: "An error occurred. Please try again later." });
