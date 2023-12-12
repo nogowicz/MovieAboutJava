@@ -2,10 +2,11 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { CSSProperties } from 'styled-components';
-import axios, { AxiosError } from 'axios';
+import { AxiosError } from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { registrationSchema } from './validationSchema';
 import Navbar from '../../../components/navbar';
+import { useAuth } from '../../../hooks/useAuth';
 
 interface RegistrationInputs {
     username: string;
@@ -31,6 +32,7 @@ const errorsTable: ErrorsType = {
 export default function Registration() {
     const [isButtonHovered, setButtonHovered] = useState(false);
     const navigate = useNavigate();
+    const { signUp } = useAuth();
     const {
         register,
         handleSubmit,
@@ -42,8 +44,7 @@ export default function Registration() {
 
     const onSubmit = async (data: RegistrationInputs) => {
         try {
-            await axios.post("http://localhost:8080/api/auth/signup", data);
-            navigate("/");
+            signUp(data.email, data.password, data.username);
         } catch (error: unknown) {
             if (error && error instanceof AxiosError) {
                 if (error.response) {

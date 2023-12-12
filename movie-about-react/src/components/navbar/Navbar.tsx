@@ -4,7 +4,7 @@ import "./Navbar.css";
 import { FaBars, FaTimes } from "react-icons/fa";
 import { IconContext } from "react-icons/lib";
 import { NavLink } from "react-router-dom";
-import { useSignOut } from "react-auth-kit";
+import { useAuth } from "../../hooks/useAuth";
 
 type NavbarProps = {
     mode: 'auth' | 'unauth';
@@ -12,9 +12,9 @@ type NavbarProps = {
 
 export default function Navbar({ mode = 'unauth' }: NavbarProps) {
     const [click, setClick] = useState(false);
-    const signOut = useSignOut()
     const handleClick = () => setClick(!click);
     const closeMobileMenu = () => setClick(false);
+    const { logout } = useAuth();
 
 
     if (mode === 'auth') {
@@ -82,7 +82,7 @@ export default function Navbar({ mode = 'unauth' }: NavbarProps) {
                                         }
                                         onClick={() => {
                                             closeMobileMenu();
-                                            signOut();
+                                            logout();
                                         }}
                                     >
                                         Logout

@@ -1,11 +1,11 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useState } from 'react';
-import axios, { AxiosError } from 'axios';
-import { useSignIn } from 'react-auth-kit';
+import { AxiosError } from 'axios';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { CSSProperties } from 'styled-components';
 import { loginSchema } from './validationSchema';
+import { useAuth } from '../../../hooks/useAuth';
 import Navbar from '../../../components/navbar';
 
 interface Inputs {
@@ -13,18 +13,10 @@ interface Inputs {
     password: string;
 }
 
-interface ResponseType {
-    data: {
-        accessToken: string;
-        expiresIn: number;
-        tokenType: string;
-    }
-}
-
 export default function Login() {
     const [isButtonHovered, setButtonHovered] = useState(false);
     const navigate = useNavigate();
-    const signIn = useSignIn();
+    const { login } = useAuth();
     const {
         register,
         handleSubmit,
@@ -36,20 +28,8 @@ export default function Login() {
 
     const onSubmit = async (data: Inputs) => {
         try {
-            const response: ResponseType = await axios.post("http://localhost:8080/api/auth/signin", data);
-
-            signIn({
-                token: response.data.accessToken,
-                expiresIn: response.data.expiresIn,
-                tokenType: response.data.tokenType,
-                authState: {
-                    usernameOrEmail: data.usernameOrEmail,
-                    token: response.data.accessToken,
-                }
-            });
-            navigate("/");
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (error: any) {
+            login(data.usernameOrEmail, data.password);
+        } catch (error: unknown) {
             if (error && error instanceof AxiosError) {
                 if (error.response) {
                     setError("usernameOrEmail", { message: error.response.data });
